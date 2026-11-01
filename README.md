@@ -21,11 +21,9 @@ This project demonstrates practical implementation of Django backend development
 - Protected application management pages.
 
 ### Job Application Management
-- Create new job application records.
-- View saved application details.
-- Update existing application information.
-- Delete applications with confirmation.
+- Create, view, update, and delete job applications.
 - Track company, job role, location, application date, job link, and notes.
+- Delete applications with confirmation.
 
 ### Search, Filter and Sorting
 - Search applications by company name.
@@ -76,4 +74,91 @@ job_tracker_project/
 │   │       ├── delete_job.html
 │   │       ├── login.html
 │   │       └── register.html
+│   ├── forms.py
+│   ├── models.py
+│   ├── urls.py
+│   └── views.py
 │
+├── jobtracker/
+│   ├── settings.py
+│   ├── urls.py
+│   ├── asgi.py
+│   └── wsgi.py
+│
+├── screenshots/
+│   └── dashboard.png
+│
+├── .gitignore
+├── manage.py
+├── requirements.txt
+└── README.md
+```
+
+## Dashboard Screenshot
+
+![CareerTrack Dashboard](screenshots/dashboard.png)
+
+## Installation and Setup
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/mukililakkiya/Career-Track-Job-Application-Tracker.git
+```
+
+2. Navigate to the project folder:
+
+```bash
+cd Career-Track-Job-Application-Tracker
+```
+
+3. Create and activate a virtual environment:
+
+```bash
+python -m venv venv
+```
+
+4. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+5. Configure your `.env` file with your own Django secret key and DEBUG setting.
+
+6. Apply migrations:
+
+```bash
+python manage.py migrate
+```
+
+7. Start the development server:
+
+```bash
+python manage.py runserver
+```
+
+8. Open `http://127.0.0.1:8000/` in your browser.
+
+## Skills Demonstrated
+
+- Python programming
+- Django web development
+- Database design and ORM
+- CRUD operations
+- User authentication
+- HTML and CSS
+- Git and GitHub
+
+## Future Enhancements
+
+- Job application reminders.
+- Export application reports.
+- Advanced dashboard analytics.
+- Cloud deployment.
+
+## Author
+
+**Mukil Ilakkiya**
+
+[GitHub Repository](https://github.com/mukililakkiya/Career-Track-Job-Application-Tracker)
