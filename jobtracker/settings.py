@@ -6,23 +6,29 @@ Django settings for jobtracker project.
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import dj_database_url
 
 # Build paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables from .env
+# Load environment variables
 load_dotenv(BASE_DIR / '.env')
 
 # Security settings
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 if not SECRET_KEY:
-    raise ValueError("DJANGO_SECRET_KEY is missing from the .env file")
+    raise ValueError("DJANGO_SECRET_KEY is missing")
 
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
+# Allowed hosts
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
+render_host = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+
+if render_host:
+    ALLOWED_HOSTS.append(render_host)
 
 # Application definition
 INSTALLED_APPS = [
@@ -35,8 +41,10 @@ INSTALLED_APPS = [
     'jobapp',
 ]
 
+# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -64,15 +72,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'jobtracker.wsgi.application'
 
-
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+DATABASE_URL = os.getenv('DATABASE_URL')
 
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -86,13 +103,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
@@ -100,13 +113,26 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Static files
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
+
+# Production security
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
